@@ -1,0 +1,27 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - traefik-public
+    environment:
+      - GF_SERVER_ROOT_URL=http://127.0.0/analytics
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.grafana.rule=PathPrefix(`/analytics`)"
+        - "traefik.http.routers.priority=2"
+        - "traefik.http.routers.grafana.entrypoints=web"
+        - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+        - "traefik.http.middlewares.grafana-stripper.stripprefix.prefixes=/analytics"
+        - "traefik.http.routers.grafana.middlewares=grafana-stripper"
+
+volumes:
+  grafana_data:
+networks:
+  traefik-public:
+    external: true

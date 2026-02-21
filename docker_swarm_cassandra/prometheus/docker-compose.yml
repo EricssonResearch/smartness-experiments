@@ -1,0 +1,77 @@
+services:
+  prometheus:
+    image: prom/prometheus:v3.4.1
+    user: root
+    volumes:
+      - ./config:/etc/prometheus
+      - prometheus_data:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prometheus.rule=Host(`prometheus.cassandracluster.com`)"
+        - "traefik.http.routers.prometheus.entrypoints=web"
+        - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+        # - "traefik.http.middlewares.prometheus-stripper.stripprefix.prefixes=/prometheus"
+        # - "traefik.http.routers.prometheus.middlewares=prometheus-stripper"
+    networks:
+      - traefik-public
+
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    environment:
+      - NODE_ID={{.Node.ID}}
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/hostname:/etc/nodename
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+      - "--collector.textfile.directory=/home"
+    configs:
+      - source: node_exporter_entrypoint
+        target: /docker-entrypoint.sh
+    entrypoint:
+      - /bin/sh
+      - /docker-entrypoint.sh
+    deploy:
+      mode: global
+    networks:
+      - traefik-public
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    deploy:
+      mode: global
+    networks:
+      - traefik-public
+
+volumes:
+  prometheus_data:
+    external:
+      name: prometheus_data
+
+configs:
+  node_exporter_entrypoint:
+    external: true
+
+networks:
+  traefik-public:
+    external: true

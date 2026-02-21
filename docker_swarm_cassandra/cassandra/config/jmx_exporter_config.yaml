@@ -1,0 +1,40 @@
+startDelaySeconds: 5
+ssl: false
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+
+rules:
+  # JVM metrics
+  - pattern: 'java.lang<type=Memory><(HeapMemoryUsage|NonHeapMemoryUsage)><(.*)>'
+    name: java_memory_$2_$3
+
+  - pattern: 'java.lang<type=GarbageCollector, name=(.*)><CollectionCount>'
+    name: java_gc_collection_count
+    labels:
+      gc: "$1"
+
+  - pattern: 'java.lang<type=GarbageCollector, name=(.*)><CollectionTime>'
+    name: java_gc_collection_time_ms
+    labels:
+      gc: "$1"
+
+  # Cassandra metrics
+  - pattern: 'org.apache.cassandra.metrics<type=ClientRequest, scope=(.*), name=(.*)><Count>'
+    name: cassandra_client_request_$2_total
+    labels:
+      scope: "$1"
+
+  - pattern: 'org.apache.cassandra.metrics<type=Storage, name=Load><Count>'
+    name: cassandra_storage_load_bytes
+
+  - pattern: 'org.apache.cassandra.metrics<type=Compaction, name=CompletedTasks><Count>'
+    name: cassandra_compaction_completed_total
+
+  - pattern: 'org.apache.cassandra.metrics<type=Compaction, name=PendingTasks><Value>'
+    name: cassandra_compaction_pending
+
+  - pattern: 'org.apache.cassandra.metrics<type=ThreadPools, path=(.*), scope=(.*), name=ActiveTasks><Value>'
+    name: cassandra_threadpool_active
+    labels:
+      path: "$1"
+      scope: "$2"

@@ -1,0 +1,56 @@
+services:
+  traefik:
+    image: traefik:v3.4.1
+    command:
+      - "--log.level=DEBUG"
+
+      # swarm
+      - "--providers.swarm=true"
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
+      - "--providers.swarm.exposedByDefault=false"
+      - "--providers.swarm.network=traefik-public"
+      
+      # api
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+
+      # entrypoint http
+      - "--entrypoints.web.address=:80"
+      - "--accesslog=true"
+
+      - "--entrypoints.traefik.address=:8080"
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+      - target: 8080
+        published: 8080
+        mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik-public
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - traefik.enable=true
+
+        # Route for dashboard
+        - traefik.http.routers.dashboard.rule=Host(`dashboard.cassandracluster.com`)
+        - traefik.http.routers.dashboard.entrypoints=web
+        - traefik.http.routers.dashboard.service=api@internal
+
+        # Optional: Add authentication
+        # - traefik.http.routers.traefik.middlewares=auth
+        # - traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
+
+        # Dummy service to silence the “port is missing” error
+        - traefik.http.services.dashboard.loadbalancer.server.port=80
+
+
+networks:
+  traefik-public:
+    external: true

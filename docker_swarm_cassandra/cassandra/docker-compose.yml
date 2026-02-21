@@ -1,0 +1,259 @@
+services:
+  cassandra-1:
+    image: cassandra:5.0.6
+    hostname: cassandra-1
+    networks:
+      - traefik-public
+    ports:
+      - target: 9042
+        published: 9042
+        protocol: tcp
+        mode: host
+      - target: 7070
+        published: 7070
+        protocol: tcp
+        mode: host
+    environment:
+      CASSANDRA_LISTEN_ADDRESS: cassandra-1
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-1
+      CASSANDRA_CLUSTER_NAME: SmartnessCluster
+      HEAP_NEWSIZE: 8192M
+      MAX_HEAP_SIZE: 8192M
+      JVM_OPTS: "-Xms4096M -Xmx8192M -Dcom.sun.management.jmxremote.authenticate=false"
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RACK1
+      CASSANDRA_ENDPOI9046NT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: "128"
+      LOCAL_JMX: no
+      JVM_EXTRA_OPTS: >
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.local.only=false
+        -javaagent:/opt/jmx/jmx_prometheus_javaagent.jar=0.0.0.0:7070:/opt/jmx/config.yaml
+    configs:
+      - source: cassandra-jmx-config
+        target: /opt/jmx/config.yaml
+    volumes:
+      - cassandra1_data:/var/lib/cassandra
+      - /home/cloud/jmx/jmx_prometheus_javaagent.jar:/opt/jmx/jmx_prometheus_javaagent.jar
+    deploy:
+      resources:
+        limits:
+          memory: 12G # Reserves 6144 MB of memory
+      placement:
+        constraints:
+          - node.hostname == cassandra-2
+
+  cassandra-2:
+    image: cassandra:5.0.6
+    hostname: cassandra-2
+    networks:
+      - traefik-public
+    ports:
+      - target: 9042
+        published: 9043
+        protocol: tcp
+        mode: host
+      - target: 7070
+        published: 7070
+        protocol: tcp
+        mode: host
+    environment:
+      CASSANDRA_SEEDS: cassandra-1
+      CASSANDRA_LISTEN_ADDRESS: cassandra-2
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-2
+      CASSANDRA_CLUSTER_NAME: SmartnessCluster
+      HEAP_NEWSIZE: 8192M
+      MAX_HEAP_SIZE: 8192M
+      JVM_OPTS: "-Xms4096M -Xmx8192M -Dcom.sun.management.jmxremote.authenticate=false"
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RACK1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: "128"
+      LOCAL_JMX: no
+      JVM_EXTRA_OPTS: >
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.local.only=false
+        -javaagent:/opt/jmx/jmx_prometheus_javaagent.jar=0.0.0.0:7070:/opt/jmx/config.yaml
+    configs:
+      - source: cassandra-jmx-config
+        target: /opt/jmx/config.yaml
+    volumes:
+      - cassandra2_data:/var/lib/cassandra
+      - /home/cloud/jmx/jmx_prometheus_javaagent.jar:/opt/jmx/jmx_prometheus_javaagent.jar
+    deploy:
+      resources:
+        limits:
+          memory: 12G # Reserves 6144 MB of memory
+      placement:
+        constraints:
+          - node.hostname == cassandra-3
+
+  cassandra-3:
+    image: cassandra:5.0.6
+    hostname: cassandra-3
+    networks:
+      - traefik-public
+    ports:
+      - target: 9042
+        published: 9044
+        protocol: tcp
+        mode: host
+      - target: 7070
+        published: 7070
+        protocol: tcp
+        mode: host
+    environment:
+      CASSANDRA_SEEDS: cassandra-1,cassandra-2
+      CASSANDRA_LISTEN_ADDRESS: cassandra-3
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-3
+      CASSANDRA_CLUSTER_NAME: SmartnessCluster
+      HEAP_NEWSIZE: 8192M
+      MAX_HEAP_SIZE: 8192M
+      JVM_OPTS: "-Xms4096M -Xmx8192M -Dcom.sun.management.jmxremote.authenticate=false"
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RACK1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: "128"
+      LOCAL_JMX: no
+      JVM_EXTRA_OPTS: >
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.local.only=false
+        -javaagent:/opt/jmx/jmx_prometheus_javaagent.jar=0.0.0.0:7070:/opt/jmx/config.yaml
+    configs:
+      - source: cassandra-jmx-config
+        target: /opt/jmx/config.yaml
+    volumes:
+      - cassandra3_data:/var/lib/cassandra
+      - /home/cloud/jmx/jmx_prometheus_javaagent.jar:/opt/jmx/jmx_prometheus_javaagent.jar
+    deploy:
+      resources:
+        limits:
+          memory: 12G # Reserves 6144 MB of memory
+      placement:
+        constraints:
+          - node.hostname == cassandra-4
+
+  cassandra-4:
+    image: cassandra:5.0.6
+    hostname: cassandra-4
+    networks:
+      - traefik-public
+    ports:
+      - target: 9042
+        published: 9045
+        protocol: tcp
+        mode: host
+      - target: 7070
+        published: 7070
+        protocol: tcp
+        mode: host
+    environment:
+      CASSANDRA_SEEDS: cassandra-1,cassandra-2
+      CASSANDRA_LISTEN_ADDRESS: cassandra-4
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-4
+      CASSANDRA_CLUSTER_NAME: SmartnessCluster
+      HEAP_NEWSIZE: 8192M
+      MAX_HEAP_SIZE: 8192M
+      JVM_OPTS: "-Xms4096M -Xmx8192M -Dcom.sun.management.jmxremote.authenticate=false"
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RACK1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: "128"
+      LOCAL_JMX: no
+      JVM_EXTRA_OPTS: >
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.local.only=false
+        -javaagent:/opt/jmx/jmx_prometheus_javaagent.jar=0.0.0.0:7070:/opt/jmx/config.yaml
+    configs:
+      - source: cassandra-jmx-config
+        target: /opt/jmx/config.yaml
+    volumes:
+      - cassandra4_data:/var/lib/cassandra
+      - /home/cloud/jmx/jmx_prometheus_javaagent.jar:/opt/jmx/jmx_prometheus_javaagent.jar
+    deploy:
+      resources:
+        limits:
+          memory: 12G # Reserves 6144 MB of memory
+      placement:
+        constraints:
+          - node.hostname == cassandra-5
+
+  cassandra-5:
+    image: cassandra:5.0.6
+    hostname: cassandra-5
+    networks:
+      - traefik-public
+    ports:
+      - target: 9042
+        published: 9046
+        protocol: tcp
+        mode: host
+      - target: 7070
+        published: 7070
+        protocol: tcp
+        mode: host
+    environment:
+      CASSANDRA_SEEDS: cassandra-1,cassandra-2
+      CASSANDRA_LISTEN_ADDRESS: cassandra-5
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-5
+      CASSANDRA_CLUSTER_NAME: SmartnessCluster
+      HEAP_NEWSIZE: 8192M
+      MAX_HEAP_SIZE: 8192M
+      JVM_OPTS: "-Xms4096M -Xmx8192M -Dcom.sun.management.jmxremote.authenticate=false"
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RACK1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: "128"
+      LOCAL_JMX: no
+      JVM_EXTRA_OPTS: >
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.local.only=false
+        -javaagent:/opt/jmx/jmx_prometheus_javaagent.jar=0.0.0.0:7070:/opt/jmx/config.yaml
+    configs:
+      - source: cassandra-jmx-config
+        target: /opt/jmx/config.yaml
+    volumes:
+      - cassandra5_data:/var/lib/cassandra
+      - /home/cloud/jmx/jmx_prometheus_javaagent.jar:/opt/jmx/jmx_prometheus_javaagent.jar
+    deploy:
+      resources:
+        limits:
+          memory: 12G # Reserves 6144 MB of memory
+      placement:
+        constraints:
+          - node.hostname == cassandra-6
+
+volumes:
+  cassandra1_data:
+    external:
+      name: cassandra1_data
+  cassandra2_data:
+    external:
+      name: cassandra2_data
+  cassandra3_data:
+    external:
+      name: cassandra3_data
+  cassandra4_data:
+    external:
+      name: cassandra4_data
+  cassandra5_data:
+    external:
+      name: cassandra5_data
+
+configs:
+  cassandra-jmx-config:
+    external: true
+
+networks:
+  traefik-public:
+    external: true
