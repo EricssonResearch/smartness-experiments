@@ -76,7 +76,7 @@ The authors consider the following badges as part of the evaluation process:
 
 ## Python scripts
 
-- Python 3.12
+- Python 3.12.3
 
 ## System requirements
 
