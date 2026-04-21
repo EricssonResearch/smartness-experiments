@@ -101,7 +101,7 @@ asdf install python 3.12.3
 
 **Python 3.12.3** must be installed to run our scripts. Additionally, **NVIDIA graphics drivers** and the **CUDA toolkit** are required to execute the experiments.
 
-The commands below need to be ran inside project's folder.
+The commands below must be run inside the project folder.
 
 It is necessary to create a virtual environment by running the command below:
 
@@ -130,7 +130,7 @@ mkdir dataset
 mkdir models
 ```
 
-Then, it necessary to download datasets available on [Datasets](https://github.com/EricssonResearch/telemetry_sbrc_2026) and store in folder dataset. After download, it is necessary to unzip datasets using commands below:
+Next, download the datasets available on [Datasets](https://github.com/EricssonResearch/telemetry_sbrc_2026) and store them in the dataset folder. Once the download is complete, unzip the files using the commands below:
 
 ```
 cd dataset
