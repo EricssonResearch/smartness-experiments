@@ -80,6 +80,14 @@ The authors consider the following badges as part of the evaluation process:
 
 We used [asdf](https://asdf-vm.com/) to manage our Python versions. The .tool-versions file in the project folder already specifies the exact version required for this project.
 
+Please follow the instruction on [asdf - Getting started](https://asdf-vm.com/guide/getting-started.html) to install asdf.
+After asdf installation, follow commands below to install Python plugin and our specific python version.
+
+```
+asdf plugin add python https://github.com/asdf-community/asdf-python.git
+asdf install python 3.12.3
+```
+
 ## System requirements
 
 - Ubuntu 24.04
