@@ -80,7 +80,7 @@ The authors consider the following badges as part of the evaluation process:
 
 We used [asdf](https://asdf-vm.com/) to manage our Python versions. The .tool-versions file in the project folder already specifies the exact version required for this project.
 
-Please follow the instruction on [asdf - Getting started](https://asdf-vm.com/guide/getting-started.html) to install asdf.
+Please follow the instructions on [asdf - Getting started](https://asdf-vm.com/guide/getting-started.html) to install asdf.
 After asdf installation, follow commands below to install Python plugin and our specific python version.
 
 ```
@@ -94,10 +94,12 @@ asdf install python 3.12.3
 - 16Gb RAM
 - 13th Gen Intel® Core™ i7-13800H × 20
 - 250 Gb Disk
+- Nvidia RTX graphic card with 6Gb VRAM
+- CUDA 13
 
 # Dependencies
 
-To run our Python scripts it is necessary to install Python 3.12.3.
+**Python 3.12.3** must be installed to run our scripts. Additionally, **NVIDIA graphics drivers** and the **CUDA toolkit** are required to execute the experiments.
 
 The commands below need to be ran inside project's folder.
 
