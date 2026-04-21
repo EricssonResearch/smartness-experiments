@@ -78,6 +78,8 @@ The authors consider the following badges as part of the evaluation process:
 
 - Python 3.12.3
 
+We used [asdf](https://asdf-vm.com/) to manage our Python versions. The .tool-versions file in the project folder already specifies the exact version required for this project.
+
 ## System requirements
 
 - Ubuntu 24.04
