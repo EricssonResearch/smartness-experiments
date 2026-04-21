@@ -10,7 +10,9 @@ import os
 import sys
 import torch.optim as optim
 
-from smartness_flwr.utils import WideAndDeepModel, preprocess_data
+from utils import WideAndDeepModel, preprocess_data
+
+# from smartness_flwr.utils import WideAndDeepModel, preprocess_data
 
 # --- Configuration Constants (Must match the training setup) ---
 DROPOUT = 0.5

@@ -87,7 +87,9 @@ The authors consider the following badges as part of the evaluation process:
 
 # Dependencies
 
-To run our Python scripts it is necessary to install Python 3.12.
+To run our Python scripts it is necessary to install Python 3.12.3.
+
+The commands below need to be ran inside project's folder.
 
 It is necessary to create a virtual environment by running the command below:
 
@@ -109,6 +111,26 @@ pip install -r requirements.txt
 
 # Minimal test
 
+The commands below need to be ran inside project's folder. First it is necessary to create two folder to store datasets and models respectively.
+
+```
+mkdir dataset
+mkdir models
+```
+
+Then, it necessary to download datasets available on [Datasets](https://github.com/EricssonResearch/telemetry_sbrc_2026) and store in folder dataset. After download, it is necessary to unzip datasets using commands below:
+
+```
+cd dataset
+
+unzip t100_X_y.zip -d t100
+unzip t300_X_y.zip -d t300
+unzip t500_X_y.zip -d t500
+
+cd ..
+```
+
+
 ### Regression analysis:
 
 In our experiment we use the script _nn_regression_analysis/fed_mlp_regression_analysis.py_ to conduct our training and evaluation using a deep model.
@@ -116,13 +138,13 @@ In our experiment we use the script _nn_regression_analysis/fed_mlp_regression_a
 Below there is the command to run training step:
 
 ```
-python nn_regression_analysis/fed_mlp_regression_analysis.py --data PROMETHEUS_DATASET.csv --target_data TARGET_DATASET.csv --target_col 95th_percentile --model_path MODEL_PATH --rounds 10
+python nn_regression_analysis/fed_mlp_regression_analysis.py --data dataset/t100/prometheus_metrics_wide.csv --target_data dataset/t100/t100_write.csv --target_col w_95th_percentile --model_path models/t100_write_w95perc.pth --rounds -1
 ```
 
 To evaluate, use the command below:
 
 ```
-python smartness-flwr/smartness_flwr/evaluate_global_model.py --data PROMETHEUS_DATASET.csv --target TARGET_DATASET.csv --col w_95th_percentile --rem-perc 95 --model-path MODEL_PATH --rounds 10
+python smartness-flwr/smartness_flwr/evaluate_global_model.py --data dataset/t100/prometheus_metrics_wide.csv --target dataset/t100/t100_write.csv --col w_95th_percentile --rem-perc 95 --model-path models/t100_write_w95perc.pth --rounds -1
 ```
 
 ### Federated experiments:
@@ -133,23 +155,23 @@ The commands below will run our federated experiments with 3 clients. To change 
 Server:
 
 ```
-python smartness-flwr/smartness_flwr/server_mlp.py --sample-data PROMETHEUS_DATASET.csv --sample-target TARGET_DATASET.csv --col w_95th_percentile --rem-perc 95 --model-path ./models/sbrc/global_model_3c_w_w95_zc95.pth
+python smartness-flwr/smartness_flwr/server_mlp.py --sample-data dataset/t100/prometheus_metrics_wide.csv --sample-target dataset/t100/t100_write.csv --col w_95th_percentile --rem-perc 95 --model-path models/global_model_3c_w_w95_zc95.pth
 ```
 
 Client:
 
 ```
-python smartness-flwr/smartness_flwr/client_mlp.py --cid 0 --server 127.0.0.1:8080 --data PROMETHEUS_DATASET.csv --target TARGET_DATASET.csv --col w_95th_percentile --rem-perc 95
+python smartness-flwr/smartness_flwr/client_mlp.py --cid 0 --server 127.0.0.1:8080 --data dataset/t100/prometheus_metrics_wide.csv --target dataset/t100/t100_write.csv --col w_95th_percentile --rem-perc 95
 
-python smartness-flwr/smartness_flwr/client_mlp.py --cid 1 --server 127.0.0.1:8080 --data PROMETHEUS_DATASET.csv --target TARGET_DATASET.csv --col w_95th_percentile --rem-perc 95
+python smartness-flwr/smartness_flwr/client_mlp.py --cid 1 --server 127.0.0.1:8080 --data dataset/t300/prometheus_metrics_wide.csv --target dataset/t300/t300_write.csv --col w_95th_percentile --rem-perc 95
 
-python smartness-flwr/smartness_flwr/client_mlp.py --cid 2 --server 127.0.0.1:8080 --data PROMETHEUS_DATASET.csv --target TARGET_DATASET.csv --col w_95th_percentile --rem-perc 95
+python smartness-flwr/smartness_flwr/client_mlp.py --cid 2 --server 127.0.0.1:8080 --data dataset/t500/prometheus_metrics_wide.csv --target dataset/t500/t500_write.csv --col w_95th_percentile --rem-perc 95
 ```
 
 Evalute global model:
 
 ```
-python smartness-flwr/smartness_flwr/evaluate_global_model.py --data PROMETHEUS_DATASET.csv --target TARGET_DATASET.csv --col w_95th_percentile --rem-perc 95 --model-path MODEL_PATH.pth
+python smartness-flwr/smartness_flwr/evaluate_global_model.py --data dataset/t300/prometheus_metrics_wide.csv --target dataset/t300/t300_write.csv --col w_95th_percentile --rem-perc 95 --model-path models/global_model_3c_w_w95_zc95.pth --rounds -1
 ```
 
 # LICENSE

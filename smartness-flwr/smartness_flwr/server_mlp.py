@@ -14,7 +14,7 @@ from flwr.common import Parameters, FitRes, Scalar, EvaluateRes
 from utils import WideAndDeepModel, get_weights, set_weights, initialize_weights, preprocess_data, get_weights, \
     set_weights
 
-CLIENTS_REQUIRED = 2
+CLIENTS_REQUIRED = 3
 NUM_ROUNDS = 20
 
 
