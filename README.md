@@ -153,11 +153,20 @@ Below there is the command to run training step:
 python nn_regression_analysis/fed_mlp_regression_analysis.py --data dataset/t100/prometheus_metrics_wide.csv --target_data dataset/t100/t100_write.csv --target_col w_95th_percentile --model_path models/t100_write_w95perc.pth --rounds -1
 ```
 
+| ![Regression analysis training output](./pictures/regression_analysis_training_step.png) |
+| :--: |
+|*Training step output for the regression analysis model*|
+
 To evaluate, use the command below:
 
 ```
 python smartness-flwr/smartness_flwr/evaluate_global_model.py --data dataset/t100/prometheus_metrics_wide.csv --target dataset/t100/t100_write.csv --col w_95th_percentile --rem-perc 95 --model-path models/t100_write_w95perc.pth --rounds -1
 ```
+
+| ![Regression analysis evaluation output](./pictures/regression_analysis_evaluation_step.png) |
+| :--: |
+|*Evaluation step output for the regression analysis model*|
+
 
 ### Federated experiments:
 
